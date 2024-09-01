@@ -5,8 +5,8 @@
 
 struct Nodo {
   int valor;
-  Nodo *siguiente;
-  Nodo *anterior;
+  Nodo *siguiente = nullptr;
+  Nodo *anterior = nullptr;
 };
 
 struct Lista {
@@ -14,9 +14,9 @@ struct Lista {
   void swap(Nodo *);
   void swapleft(Nodo *);
 
-  Nodo *inicio;
-  Nodo *fin;
-  size_t len;
+  Nodo *inicio = nullptr;
+  Nodo *fin = nullptr;
+  size_t len = 0;
 };
 
 void Lista::push(int val) {
@@ -36,34 +36,22 @@ void Lista::push(int val) {
 
 void Lista::swap(Nodo *ref) {
   Nodo *sig = ref->siguiente;
-  Nodo *pre = ref->anterior;
-  ref->siguiente = nullptr;
-  ref->anterior = fin->anterior;
+  ref->siguiente = fin;
   fin->siguiente = sig;
-  fin->anterior = pre;
-  if (fin->anterior != nullptr) {
-    fin->anterior->siguiente = fin;
-  }
-  if (fin->siguiente != nullptr) {
-    fin->siguiente->anterior = fin;
-  }
-  fin = ref;
+  Nodo *pre = fin->anterior;
+  fin->anterior = ref;
+  fin = pre;
+  fin->siguiente = nullptr;
 }
 
 void Lista::swapleft(Nodo *ref) {
   Nodo *sig = ref->siguiente;
-  Nodo *pre = ref->anterior;
-  ref->siguiente = inicio->siguiente;
-  ref->anterior = nullptr;
+  ref->siguiente = inicio;
+  Nodo *post = inicio->siguiente;
   inicio->siguiente = sig;
-  inicio->anterior = pre;
-  if (inicio->anterior != nullptr) {
-    inicio->anterior->siguiente = inicio;
-  }
-  if (inicio->siguiente != nullptr) {
-    inicio->siguiente->anterior = inicio;
-  }
-  inicio = ref;
+  inicio->anterior = ref;
+  inicio = post;
+  inicio->anterior = nullptr;
 }
 
 int main(int argc, char *argv[]) {
@@ -80,13 +68,12 @@ int main(int argc, char *argv[]) {
   for (int v : vec) {
     b.push(v);
   }
-  std::cout << "insertado\n";
 
   bool fail = false;
 
-  for (Nodo *ptr = b.inicio; ptr != b.fin->anterior; ptr = ptr->siguiente) {
+  for (Nodo *ptr = b.inicio; ptr != b.fin; ptr = ptr->siguiente) {
     if (ptr->valor + ptr->siguiente->valor == x) {
-      if (ptr->valor != b.fin->valor) {
+      if (ptr->siguiente->valor != b.fin->valor) {
         b.swap(ptr);
       } else if (ptr->valor != b.inicio->valor) {
         b.swapleft(ptr);
@@ -99,7 +86,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (!fail) {
-    for (Nodo *ptr = b.inicio; ptr != b.fin; ptr = ptr->siguiente) {
+    for (Nodo *ptr = b.inicio; ptr != nullptr; ptr = ptr->siguiente) {
       std::cout << ptr->valor << ' ';
     }
     std::cout << std::endl;
