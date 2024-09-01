@@ -18,19 +18,21 @@ unos = [0]
 potencias = [0]
 impares = [0]
 
-u = 0
-p = 0
-i = 0
-for v in A:
-    if v == 1:
-        u += v
-    elif v % 2 == 1:
-        i += v
-    elif is_pow(v):
-        p += v
-    unos.append(u)
-    impares.append(i)
-    potencias.append(p)
+
+def prep():
+    u = 0
+    p = 0
+    i = 0
+    for v in A:
+        if v == 1:
+            u += v
+        elif (v % 2) == 1:
+            i += v
+        elif is_pow(v):
+            p += v
+        unos.append(u)
+        impares.append(i)
+        potencias.append(p)
 
 
 def jugar(L, R):
@@ -47,5 +49,6 @@ def jugar(L, R):
         return "B"
 
 
+prep()
 for L, R in juegos:
     print(jugar(L-1, R))
