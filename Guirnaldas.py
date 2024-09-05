@@ -19,8 +19,12 @@ for c in s:
 
 taps = min(t, a, p)
 t -= taps
+a -= taps
 p -= taps
 
 tups = min(t, u, p)
+t -= taps
+u -= taps
+p -= taps
 
 print(taps + tups)
