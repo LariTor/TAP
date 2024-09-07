@@ -1,0 +1,16 @@
+- [x] A = Alto ta-te-ti
+- [X] B = Busqueda del periodo
+- [X] C = Conociendo Ngipto
+- [X] D = Dupla
+- [ ] E = Enfrentamiento final
+- [X] F = Fixture
+- [X] G = Guirnaldas
+- [ ] H = HIlo eléctrico para ganado
+- [ ] I = Innovaciones roboticas
+- [X] J = Jamas sumaran X
+- [ ] K = Kaleidoscopio tipográfico
+- [X] L = Logística Lúdica
+- [ ] M = Mercado de Globos
+- [x] N = Nuevas dimensiones
+
+- [ ] 
