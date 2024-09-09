@@ -8,9 +8,7 @@
 - [ ] H = HIlo eléctrico para ganado
 - [ ] I = Innovaciones roboticas
 - [X] J = Jamas sumaran X
-- [ ] K = Kaleidoscopio tipográfico
+- [x] K = Kaleidoscopio tipográfico
 - [X] L = Logística Lúdica
 - [ ] M = Mercado de Globos
 - [x] N = Nuevas dimensiones
-
-- [ ] 
