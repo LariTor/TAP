@@ -2,7 +2,7 @@
 - [X] B = Busqueda del periodo
 - [X] C = Conociendo Ngipto
 - [X] D = Dupla
-- [ ] E = Enfrentamiento final
+- [X] E = Enfrentamiento final
 - [X] F = Fixture
 - [X] G = Guirnaldas
 - [ ] H = HIlo eléctrico para ganado
