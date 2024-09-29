@@ -15,13 +15,16 @@ class Punto:
         x2, y2 = cerco.cor2
         return x > x1 and x < x2 and y > y1 and y < y2
 
+    def __repr__(self):
+        return f"<{self.cor}>"
+
 
 class Cerco(Punto):
-    def __init__(self, m,  cor1=(0, 0), cor2=(0, 0)):
+    def __init__(self, cor1=(0, 0), cor2=(0, 0)):
         Punto.__init__(self, cor1)
         self.E = 0.0
         self.A = 0.0
-        self.M = m
+        self.M = 0
         self.hijos = []
         self.cor2 = cor2
 
@@ -56,7 +59,7 @@ class Cerco(Punto):
         self.M += 1
 
     def __repr__(self):
-        return f"<{self.M} {str(self.hijos)}>"
+        return f"<{self.cor} {self.cor2} {self.M} {str(self.hijos)}>"
 
 
 # Pre: Los cercos ya estan resueltos
@@ -115,108 +118,42 @@ def resolver(c: Cerco):
     c.M = M
 
 
+def ltt(ls: list) -> list[tuple]:
+    return [tuple(ls[:2]), tuple(ls[2:])]
+
+
+class Cierre(Punto):
+
+    def __init__(self, c: Cerco):
+        Punto.__init__(self, c.cor2)
+        self.cer = c
+
+
+def cierre(c: Cerco) -> [Cerco, Cierre]:
+    return [c, Cierre(c)]
+
+
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+# ---------------------------------------------------------------------------------
+
+
 N, M = map(int, input().split())
 
-input_cercos = [list(map(int, input().split())) for i in range(N)]
-input_puntos = [tuple(map(int, input().split())) for i in range(M)]
+input_cercos = [Cerco(*ltt(list(map(int, input().split())))) for i in range(N)]
+input_puntos = [Punto(tuple(map(int, input().split()))) for i in range(M)]
 
+raiz = Cerco((-inf, -inf), (inf, inf))
+input_cercos.append(raiz)
 
-input_puntos.sort(key=lambda p: p[0])
+todos = flatten(list(map(cierre, input_cercos))) + input_puntos
+todos.sort(key=lambda p: p.cor[0])
 
-base = 2**(M-1).bit_length()
+print("-----------")
+print(todos)
+print("-----------")
 
-range_tree = [0] * (base-1) + input_puntos + [(inf, inf)] * (base - M)
-
-
-def build_up(i: int) -> list[int, int, int, list[list[int, int, int]]]:
-    if i >= base-1:
-        cor = range_tree[i]
-        meta = [[cor[1], None, None]]
-        range_tree[i] = [cor[0], (cor[0], cor[0]), meta]
-        return [cor[0], cor[0], cor[0], meta]
-    L = build_up(2*i+1)
-    R = build_up(2*i+2)
-    minL = min(L[0], L[1])
-    minR = min(R[0], R[1])
-    maxR = R[2]
-    metaL = L[3]
-    metaR = R[3]
-    j = 0
-    k = 0
-    meta = []
-    while j < len(metaL) and k < len(metaR):
-        if metaL[j][0] < metaR[k][0]:
-            meta.append([metaL[j][0], j, k])
-            j += 1
-        else:
-            meta.append([metaR[k][0], j, k])
-            k += 1
-    while j < len(metaL):
-        meta.append([metaL[j][0], j, inf])
-        j += 1
-    while k < len(metaR):
-        meta.append([metaR[k][0], inf, k])
-        k += 1
-    range_tree[i] = [R[0], (minL, maxR), meta]
-    return [minL, minR, maxR, meta]
-
-
-def querry(cerco: list[int, int, int, int], i: int, y: int) -> int:
-    curr = range_tree[i]
-    # Es una hoja
-    if i >= base-1:
-        # print('curr', curr, 'x', curr[0], 'y', curr[2][0][0])
-        return int(Punto((curr[0], curr[2][0][0])).esta_dentro(
-            Cerco(0, (cerco[:2]), (cerco[2:]))))
-    xl = cerco[0]
-    xr = cerco[2]
-    # Contiene el rango
-    if xl <= curr[1][0] and curr[1][1] <= xr:
-        # print('Contiene', curr, 'rl', curr[1][0], 'rr', curr[1][1])
-        j = y
-        while j < len(curr[2]) and curr[2][j][0] <= xr:
-            # print('y', curr[2][0][j])
-            j += 1
-        return j - y
-    # Completamente disjunto
-    if xr < curr[1][0] or curr[1][1] < xl:
-        # print('Disjunto', curr, 'rl', curr[1][0], 'rr', curr[1][1])
-        return 0
-    # Contiene el rango parcialmente
-    # print('Else', curr, 'rl', curr[1][0], 'rr', curr[1][1], 'xl', xl, 'xr', xr)
-    # print('L', range_tree[2*i+1][0])
-    L = querry(cerco, 2*i+1, curr[2][y][1])
-    # print('R', range_tree[2*i+2][0])
-    R = querry(cerco, 2*i+2, curr[2][y][2])
-    return L + R
-
-
-build_up(0)
-
-
-raiz = Cerco(M, (-inf, -inf), (inf, inf))
-
-
-cercos = []
-
-
-for input_cerco in input_cercos:
-    y = bisect_left(range_tree[0][2], input_cerco[1], key=lambda m: m[0])
-    m = querry(input_cerco, 0, y)
-    cerco = Cerco(m, (input_cerco[:2]), (input_cerco[2:]))
-    cercos.append(cerco)
-
-
-for cerco in cercos:
-    raiz.insertar_cerco(cerco)
 
 resolver(raiz)
 print(raiz.E)
-
-'''
-cerco = [20, 20, 60, 80]
-print("TEST", cerco)
-y = bisect_left(range_tree[0][2], cerco[1], key=lambda m: m[0])
-print("range_tree", range_tree)
-print(querry(cerco, 0, y))
-'''
