@@ -18,12 +18,12 @@ public:
   Punto(const Punto &) = default;
   Punto &operator=(Punto &&) = default;
   Punto &operator=(const Punto &) = default;
-  virtual ~Punto() = default;
+  ~Punto() = default;
 
   Punto(int x, int y) : x_m(x), y_m(y) {}
 
-  int get_x() const { return x_m; }
-  int get_y() const { return y_m; }
+  inline int get_x() const { return x_m; }
+  inline int get_y() const { return y_m; }
 
   virtual void evento(set<Evento *, PuntoCmp> &abiertos) = 0;
 
@@ -37,9 +37,9 @@ struct PuntoCmp {
   }
 };
 
-void evento_punto(set<Evento *, PuntoCmp> &, Punto *);
-void evento_cerco(set<Evento *, PuntoCmp> &, Cerco *);
-void evento_cierre(set<Evento *, PuntoCmp> &, Cierre *);
+inline void evento_punto(set<Evento *, PuntoCmp> &, Punto *);
+inline void evento_cerco(set<Evento *, PuntoCmp> &, Cerco *);
+inline void evento_cierre(set<Evento *, PuntoCmp> &, Cierre *);
 
 class Aterrizaje : public Punto {
 public:
@@ -70,19 +70,19 @@ public:
   Cerco(int x0, int y0, int x1, int y1)
       : Punto(x0, y0), x1_m(x1), y1_m(y1), nid(ids++) {}
 
-  int get_x1() const { return this->x1_m; }
-  int get_y1() const { return this->y1_m; }
+  inline int get_x1() const { return this->x1_m; }
+  inline int get_y1() const { return this->y1_m; }
 
-  Cerco *get_padre() const { return this->padre; }
+  inline Cerco *get_padre() const { return this->padre; }
 
-  void insertar_cerco(Cerco *c) {
+  inline void insertar_cerco(Cerco *c) {
     c->padre = this;
     this->hijos.push_back(c);
   }
 
-  void insertar_punto() { this->M++; }
-  int get_M() { return this->M; }
-  double get_E() { return this->E; }
+  inline void insertar_punto() { this->M++; }
+  inline int get_M() { return this->M; }
+  inline double get_E() { return this->E; }
 
   void resolver() {
     if (this->hijos.size() == 0) {
@@ -117,8 +117,8 @@ public:
     evento_cerco(abiertos, this);
   }
 
-  int id() { return nid; }
-  std::vector<Cerco *> &get_hijos() { return hijos; }
+  inline int id() { return nid; }
+  inline std::vector<Cerco *> &get_hijos() { return hijos; }
 
 private:
   static int ids;
@@ -176,7 +176,7 @@ public:
   Cierre(Cerco *cerco)
       : Punto(cerco->get_x1(), cerco->get_y1()), cerco_m(cerco) {}
 
-  Cerco *get_cerco() { return cerco_m; }
+  inline Cerco *get_cerco() { return cerco_m; }
 
   virtual void evento(set<Evento *, PuntoCmp> &abiertos) override {
     evento_cierre(abiertos, this);
@@ -198,8 +198,8 @@ public:
       : Punto(cerco->get_x(), abre ? cerco->get_y() : cerco->get_y1()),
         cerco_m(cerco), abre_m(abre) {}
 
-  bool abierto() { return this->abre_m; }
-  Cerco *get_cerco() { return cerco_m; }
+  inline bool abierto() { return this->abre_m; }
+  inline Cerco *get_cerco() { return cerco_m; }
   virtual void evento(set<Evento *, PuntoCmp> &) override {}
 
 private:
@@ -209,7 +209,7 @@ private:
 
 int Cerco::ids = 0;
 
-void evento_punto(set<Evento *, PuntoCmp> &abiertos, Punto *punto) {
+inline void evento_punto(set<Evento *, PuntoCmp> &abiertos, Punto *punto) {
   auto arr = abiertos.lower_bound((Evento *)punto);
   if (!(*arr)->abierto()) {
     (*arr)->get_cerco()->insertar_punto();
@@ -223,7 +223,7 @@ void evento_punto(set<Evento *, PuntoCmp> &abiertos, Punto *punto) {
   }
 }
 
-void evento_cerco(set<Evento *, PuntoCmp> &abiertos, Cerco *cerco) {
+inline void evento_cerco(set<Evento *, PuntoCmp> &abiertos, Cerco *cerco) {
   auto arr = abiertos.lower_bound((Evento *)cerco);
   if (!(*arr)->abierto()) {
     (*arr)->get_cerco()->insertar_cerco(cerco);
@@ -239,7 +239,7 @@ void evento_cerco(set<Evento *, PuntoCmp> &abiertos, Cerco *cerco) {
   abiertos.insert(new Evento(cerco, false));
 }
 
-void evento_cierre(set<Evento *, PuntoCmp> &abiertos, Cierre *cierre) {
+inline void evento_cierre(set<Evento *, PuntoCmp> &abiertos, Cierre *cierre) {
   Evento *a = new Evento(cierre->get_cerco(), true);
   Evento *b = new Evento(cierre->get_cerco(), false);
   auto c = abiertos.extract(a);
@@ -281,54 +281,50 @@ std::ostream &operator<<(std::ostream &out, Cerco *cerco) {
 }
 
 int main() {
-  try {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cout << fixed;
-    cout << setprecision(10);
+  ios_base::sync_with_stdio(false);
+  cin.tie(0);
+  cout << fixed;
+  cout << setprecision(10);
 
-    int n, m;
-    cin >> n >> m;
+  int n, m;
+  cin >> n >> m;
 
-    vector<Punto *> eventos;
-    for (int i = 0; i < n; ++i) {
-      int x0, y0, x1, y1;
-      cin >> x0 >> y0 >> x1 >> y1;
-      Cerco *cer = new Cerco(x0, y0, x1, y1);
-      eventos.push_back(cer);
-      eventos.push_back(new Cierre(cer));
-    }
-    for (int i = 0; i < m; ++i) {
-      int x, y;
-      cin >> x >> y;
-      eventos.push_back(new Aterrizaje(x, y));
-    }
-    auto comp = [](const Punto *a, const Punto *b) {
-      return a->get_x() < b->get_x();
-    };
-    sort(eventos.begin(), eventos.end(), comp);
-    set<Evento *, PuntoCmp> abiertos = {};
-    Cerco *raiz =
-        new Cerco(numeric_limits<int>::min(), numeric_limits<int>::min(),
-                  numeric_limits<int>::max(), numeric_limits<int>::max());
-    abiertos.insert(new Evento(raiz, true));
-    abiertos.insert(new Evento(raiz, false));
-    eventos.push_back(new Cierre(raiz));
-
-    // cout << "------------------------------\n";
-    for (Punto *p : eventos) {
-      p->evento(abiertos);
-      // cout << abiertos << '\n';
-    }
-    // cout << "------------------------------\n";
-
-    // cout << raiz << '\n';
-
-    // cout << "------------------------------\n";
-    cout << raiz->get_E() << '\n';
-  } catch (...) {
-    cout << "HOLA\n";
+  vector<Punto *> eventos;
+  for (int i = 0; i < n; ++i) {
+    int x0, y0, x1, y1;
+    cin >> x0 >> y0 >> x1 >> y1;
+    Cerco *cer = new Cerco(x0, y0, x1, y1);
+    eventos.push_back(cer);
+    eventos.push_back(new Cierre(cer));
   }
+  for (int i = 0; i < m; ++i) {
+    int x, y;
+    cin >> x >> y;
+    eventos.push_back(new Aterrizaje(x, y));
+  }
+  auto comp = [](const Punto *a, const Punto *b) {
+    return a->get_x() < b->get_x();
+  };
+  sort(eventos.begin(), eventos.end(), comp);
+  set<Evento *, PuntoCmp> abiertos = {};
+  Cerco *raiz =
+      new Cerco(numeric_limits<int>::min(), numeric_limits<int>::min(),
+                numeric_limits<int>::max(), numeric_limits<int>::max());
+  abiertos.insert(new Evento(raiz, true));
+  abiertos.insert(new Evento(raiz, false));
+  eventos.push_back(new Cierre(raiz));
+
+  // cout << "------------------------------\n";
+  for (Punto *p : eventos) {
+    p->evento(abiertos);
+    // cout << abiertos << '\n';
+  }
+  // cout << "------------------------------\n";
+
+  // cout << raiz << '\n';
+
+  // cout << "------------------------------\n";
+  cout << raiz->get_E() << '\n';
 
   return 0;
 }
