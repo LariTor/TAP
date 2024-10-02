@@ -1,4 +1,5 @@
 #include <array>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -25,7 +26,7 @@ int resolver(Tablero &tablero, int i, int j, Direccion d, Fila &secas_filas,
              Fila &secas_colum, int n, int m) {
   tablero[i][j] = "X";
   if (d == Direccion::Abajo || d == Direccion::Arriba) {
-    for (int k = 0; k < m; ++k) {
+    for (int k = m-1; k >= 0; --k) {
       if (tablero[i][k] == SECO) {
         Direccion nd = k < j ? Direccion::Izquierda : Direccion::Derecha;
         int ret =
@@ -83,8 +84,8 @@ int main(int argc, char *argv[]) {
   int n, m;
   std::cin >> n >> m;
   Tablero tablero;
-  Fila secas_filas;
-  Fila secas_colum;
+  Fila secas_filas = {};
+  Fila secas_colum = {};
   int secas = 0;
   int x, y;
   for (int i = 0; i < n; ++i) {
@@ -97,8 +98,10 @@ int main(int argc, char *argv[]) {
       secas_colum[j] += seco;
       secas_filas[i] += seco;
       secas += seco;
-      x = i;
-      y = j;
+      if (seco) {
+        x = i;
+        y = j;
+      }
     }
     tablero.push_back(fila);
   }
@@ -151,7 +154,7 @@ int main(int argc, char *argv[]) {
   }
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < m; ++j) {
-      std::cout << tablero[i][j] << ' ';
+      std::cout << std::setw(2) << tablero[i][j] << ' ';
     }
     std::cout << '\n';
   }
