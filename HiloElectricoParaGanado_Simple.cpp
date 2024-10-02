@@ -47,6 +47,7 @@ struct Cerco {
     this->M = lM;
     this->A = lA;
     this->E = lE;
+    delete hijo;
   }
 
   void fusionarCerco(Cerco *otro) {
@@ -74,7 +75,7 @@ struct Cerco {
     if (L == R) {
       return this->hijos[L];
     }
-    size_t mid = (R - L) / 2;
+    size_t mid = (R + L) / 2;
     Cerco *ret = this->mergeFus(L, mid);
     Cerco *otro = this->mergeFus(mid + 1, R);
     ret->fusionarCerco(otro);
@@ -141,7 +142,7 @@ int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(0);
   cout << fixed;
-  cout << setprecision(10);
+  cout << setprecision(15);
 
   int n, m;
   cin >> n >> m;
@@ -162,10 +163,12 @@ int main() {
         .A = 0.0,
         .E = 0.0,
     };
-    eventos.push_back(
-        {.x = x0, .tipo = TipoDeEvento::AbroCerco, .sujeto = Sujeto{.cerco = cer}});
-    eventos.push_back(
-        {.x = x1, .tipo = TipoDeEvento::CierroCerco, .sujeto = Sujeto{.cerco = cer}});
+    eventos.push_back({.x = x0,
+                       .tipo = TipoDeEvento::AbroCerco,
+                       .sujeto = Sujeto{.cerco = cer}});
+    eventos.push_back({.x = x1,
+                       .tipo = TipoDeEvento::CierroCerco,
+                       .sujeto = Sujeto{.cerco = cer}});
   }
   for (int i = 0; i < m; ++i) {
     int x, y;
