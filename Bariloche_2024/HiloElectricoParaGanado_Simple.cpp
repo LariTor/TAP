@@ -63,7 +63,7 @@ struct Cerco {
       double P00 = P0 * P0;
       double P01 = P0 * P1;
       double P11 = P1 * P1;
-      lA = otro->A * P01 + otro->M * P1;
+      lA = otro->A * P0 + this->A * P1;
       lE = otro->E * P00 + this->E * P11 + 2 * (otro->A + this->A) * P01;
     }
     this->M = lM;

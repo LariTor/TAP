@@ -5,7 +5,7 @@
 - [X] E = Enfrentamiento final
 - [X] F = Fixture
 - [X] G = Guirnaldas
-- [ ] H = HIlo eléctrico para ganado
+- [X] H = HIlo eléctrico para ganado
 - [ ] I = Innovaciones roboticas
 - [X] J = Jamas sumaran X
 - [x] K = Kaleidoscopio tipográfico
