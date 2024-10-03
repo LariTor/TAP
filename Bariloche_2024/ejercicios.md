@@ -6,7 +6,7 @@
 - [X] F = Fixture
 - [X] G = Guirnaldas
 - [X] H = HIlo eléctrico para ganado
-- [ ] I = Innovaciones roboticas
+- [X] I = Innovaciones roboticas
 - [X] J = Jamas sumaran X
 - [x] K = Kaleidoscopio tipográfico
 - [X] L = Logística Lúdica
