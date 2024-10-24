@@ -7,8 +7,8 @@ using namespace std;
 
 typedef long long ll;
 
-const ll N = 8;
-const ll L = 4;
+const ll N = 200010;
+const ll L = 20;
 
 struct LzSegTree {
   typedef ll T;
@@ -75,45 +75,43 @@ int main(int argc, char *argv[]) {
   ios_base::sync_with_stdio(false);
   cin.tie(0);
 
-  int n, k;
+  ll n, k;
   cin >> n >> k;
 
   vector<ll> V(n);
   vector<ll> C(n);
   vector<ll> P(n);
 
-  for (int i = 0; i < n; ++i)
-	  cin >> V[i];
-  for (int i = 0; i < n; ++i)
-	  cin >> C[i];
-  for (int i = 0; i < n; ++i)
-	  cin >> P[i];
+  for (ll i = 0; i < n; ++i)
+    cin >> V[i];
+  for (ll i = 0; i < n; ++i)
+    cin >> C[i];
+  for (ll i = 0; i < n; ++i)
+    cin >> P[i];
 
   LzSegTree seg;
-  for (int i = 0; i < n; ++i)
+  for (ll i = 0; i < n; ++i)
     seg.modifyP(i, V[i]);
 
-  map<int, vector<pair<int, int>>> imp;
-  imp[0] = {};
-  for (int i = 0; i < n; ++i)
+  map<ll, vector<pair<ll, ll>>> imp;
+  for (ll i = 0; i < n; ++i)
     imp[C[i]].push_back({i, P[i]});
 
-  int i = 0;
-  int f = 0;
-  int res = 0;
+  ll i = 0;
+  ll res = 0;
+  ll maxq, f;
 
   for (auto e : imp) {
-    f = e.first;
-    int max = seg.querry(0, n);
-    res += max * (f - i);
+    f = min(k, e.first);
+    maxq = max(0LL, seg.querry(0, n));
+    res += maxq * (f - i);
     i = f;
-    for (auto trib : e.second) {
+    for (auto trib : e.second)
       seg.modifyR(trib.first, n, trib.second);
-    }
   }
   f = k;
-  int max = seg.querry(0, n);
-  res += max * (f - i);
+  maxq = max(0LL, seg.querry(0, n));
+  res += maxq * (f - i);
 
   cout << res << '\n';
 

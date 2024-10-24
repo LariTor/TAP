@@ -10,5 +10,5 @@
 - [X] J = Jamas sumaran X
 - [x] K = Kaleidoscopio tipográfico
 - [X] L = Logística Lúdica
-- [ ] M = Mercado de Globos
+- [x] M = Mercado de Globos
 - [x] N = Nuevas dimensiones
