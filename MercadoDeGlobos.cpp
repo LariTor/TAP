@@ -1,5 +1,7 @@
 #include <cmath>
 #include <iostream>
+#include <map>
+#include <vector>
 
 using namespace std;
 
@@ -73,44 +75,54 @@ int main(int argc, char *argv[]) {
   LzSegTree seg;
 
   int n = 5;
+  int k = 6;
 
-  seg.modifyP(0, 5);
-  seg.modifyP(1, 7);
-  seg.modifyP(2, 8);
-  seg.modifyP(3, 8);
-  seg.modifyP(4, 10);
+  vector<ll> V = {5, 7, 8, 8, 10};
+  vector<ll> C = {2, 0, 3, 0, 2};
+  vector<ll> P = {2, 2, 2, 1, 2};
 
+  for (int i = 0; i < n; ++i)
+    seg.modifyP(i, V[i]);
+
+  map<int, vector<pair<int, int>>> imp;
+  imp[0] = {};
+  for (int i = 0; i < n; ++i)
+    imp[C[i]].push_back({i, P[i]});
+
+  int i = 0;
+  int f = 0;
+  int res = 0;
+
+  for (auto e : imp) {
+    // Sacable
+    cout << seg.querry(0, n) << '\n';
+    for (int i = 0; i < n; ++i) {
+      cout << seg.querry(i, i + 1) << ' ';
+    }
+
+    f = e.first;
+    int max = seg.querry(0, n);
+    res += max * (f - i);
+    i = f;
+    for (auto trib : e.second) {
+      seg.modifyR(trib.first, n, trib.second);
+    }
+
+    // Sacable
+    cout << '\n' << res << "\n\n";
+  }
+  f = k;
+  int max = seg.querry(0, n);
+  res += max * (f - i);
+
+  // Sacable
   cout << seg.querry(0, n) << '\n';
   for (int i = 0; i < n; ++i) {
     cout << seg.querry(i, i + 1) << ' ';
   }
   cout << "\n\n";
 
-  seg.modifyR(1, 5, 2);
-  seg.modifyR(3, 5, 1);
-
-  cout << seg.querry(0, n) << '\n';
-  for (int i = 0; i < n; ++i) {
-    cout << seg.querry(i, i + 1) << ' ';
-  }
-  cout << "\n\n";
-
-  seg.modifyR(0, 5, 2);
-  seg.modifyR(4, 5, 2);
-
-  cout << seg.querry(0, n) << '\n';
-  for (int i = 0; i < n; ++i) {
-    cout << seg.querry(i, i + 1) << ' ';
-  }
-  cout << "\n\n";
-
-  seg.modifyR(2, 5, 2);
-
-  cout << seg.querry(0, n) << '\n';
-  for (int i = 0; i < n; ++i) {
-    cout << seg.querry(i, i + 1) << ' ';
-  }
-  cout << "\n\n";
+  cout << res << '\n';
 
   return 0;
 }
