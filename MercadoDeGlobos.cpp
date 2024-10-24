@@ -72,15 +72,24 @@ struct LzSegTree {
 };
 
 int main(int argc, char *argv[]) {
+  ios_base::sync_with_stdio(false);
+  cin.tie(0);
+
+  int n, k;
+  cin >> n >> k;
+
+  vector<ll> V(n);
+  vector<ll> C(n);
+  vector<ll> P(n);
+
+  for (int i = 0; i < n; ++i)
+	  cin >> V[i];
+  for (int i = 0; i < n; ++i)
+	  cin >> C[i];
+  for (int i = 0; i < n; ++i)
+	  cin >> P[i];
+
   LzSegTree seg;
-
-  int n = 5;
-  int k = 6;
-
-  vector<ll> V = {5, 7, 8, 8, 10};
-  vector<ll> C = {2, 0, 3, 0, 2};
-  vector<ll> P = {2, 2, 2, 1, 2};
-
   for (int i = 0; i < n; ++i)
     seg.modifyP(i, V[i]);
 
@@ -94,12 +103,6 @@ int main(int argc, char *argv[]) {
   int res = 0;
 
   for (auto e : imp) {
-    // Sacable
-    cout << seg.querry(0, n) << '\n';
-    for (int i = 0; i < n; ++i) {
-      cout << seg.querry(i, i + 1) << ' ';
-    }
-
     f = e.first;
     int max = seg.querry(0, n);
     res += max * (f - i);
@@ -107,20 +110,10 @@ int main(int argc, char *argv[]) {
     for (auto trib : e.second) {
       seg.modifyR(trib.first, n, trib.second);
     }
-
-    // Sacable
-    cout << '\n' << res << "\n\n";
   }
   f = k;
   int max = seg.querry(0, n);
   res += max * (f - i);
-
-  // Sacable
-  cout << seg.querry(0, n) << '\n';
-  for (int i = 0; i < n; ++i) {
-    cout << seg.querry(i, i + 1) << ' ';
-  }
-  cout << "\n\n";
 
   cout << res << '\n';
 
