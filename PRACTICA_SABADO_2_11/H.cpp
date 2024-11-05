@@ -31,7 +31,7 @@ ll eq(bool inverted, ll r_shift, ll periodo, ll offset) {
     if (offset < 0) {
       return -1LL - mod(r_shift, periodo);
     }
-    r_shift -= offset;
+    r_shift += offset;
   }
   return mod(r_shift, periodo);
 }
