@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     cin >> a >> u >> b >> w;
     float u_ = u + w;
     recursos[i] = {.A = a, .B = b, .u = u_};
-    Ta += a * u_;
+    Ta += a * w;
     Ca += a * u;
   }
 
@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
     return (a.B - a.A) < (b.B - b.A);
   });
 
-  Ta -= Ca;
   for (size_t i = 0; Ta > 0.; ++i) {
     const Recurso &rec = recursos[i];
     float saco = min(Ta / rec.A, rec.u);
@@ -40,7 +39,7 @@ int main(int argc, char *argv[]) {
     Tb += rec.B * saco;
   }
 
-  cout << fixed << setprecision(9) << Ta + Tb + Ca << '\n';
+  cout << fixed << setprecision(15) << Ta + Tb + Ca << '\n';
 
   return 0;
 }

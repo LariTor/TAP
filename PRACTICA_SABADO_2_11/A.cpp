@@ -1,15 +1,17 @@
 #include <algorithm>
 #include <bits/stdc++.h>
 #include <climits>
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
 typedef long long ll;
+typedef long double ld;
 
 typedef struct {
-  long double x;
+  ld x;
   ll m, b;
 } Seg;
 
@@ -21,7 +23,7 @@ typedef struct min_hull_t {
       Seg s = hull.back();
       if (s.b + s.m * s.x < b + m * s.x) {
         if (s.m != m) {
-          hull.push_back({(b - s.b) / (long double)(s.m - m), m, b});
+          hull.push_back({(b - s.b) / (ld)(s.m - m), m, b});
         }
         return;
       }
@@ -30,10 +32,10 @@ typedef struct min_hull_t {
     hull = {{LLONG_MIN, m, b}};
   }
 
-  long double query(long double x) {
+  ld query(ld x) {
     Seg s = *--upper_bound(hull.begin(), hull.end(), x,
-                           [](long double a, Seg b) { return a < b.x; });
-    return (long double)s.b + (long double)s.m * x;
+                           [](ld a, Seg b) { return a < b.x; });
+    return (ld)s.b + (ld)s.m * x;
   }
 
 } MinHull;
@@ -46,7 +48,7 @@ typedef struct max_hull_t {
       Seg s = hull.back();
       if (s.b + s.m * s.x > b + m * s.x) {
         if (s.m != m) {
-          hull.push_back({(b - s.b) / (long double)(s.m - m), m, b});
+          hull.push_back({(b - s.b) / (ld)(s.m - m), m, b});
         }
         return;
       }
@@ -55,10 +57,10 @@ typedef struct max_hull_t {
     hull = {{LLONG_MIN, m, b}};
   }
 
-  long double query(long double x) {
+  ld query(ld x) {
     Seg s = *--upper_bound(hull.begin(), hull.end(), x,
-                           [](long double a, Seg b) { return a < b.x; });
-    return (long double)s.b + (long double)s.m * x;
+                           [](ld a, Seg b) { return a < b.x; });
+    return (ld)s.b + (ld)s.m * x;
   }
 
 } MaxHull;
@@ -87,8 +89,7 @@ ForwardIterator *min_4_it(ForwardIterator *a, ForwardIterator *ae,
       .first;
 }
 
-long double area(MinHull &min_x, MinHull &min_y, MaxHull &max_x, MaxHull &max_y,
-                 long double t) {
+ld area(MinHull &min_x, MinHull &min_y, MaxHull &max_x, MaxHull &max_y, ld t) {
   return (max_x.query(t) - min_x.query(t)) * (max_y.query(t) - min_y.query(t));
 }
 
@@ -96,35 +97,35 @@ int main(int argc, char *argv[]) {
   ios_base::sync_with_stdio(false);
   cin.tie(0);
 
-  int N;
+  size_t N;
   cin >> N;
   vector<Seg> X(N);
   vector<Seg> Y(N);
-  for (int i = 0; i < N; ++i) {
+  for (size_t i = 0; i < N; ++i) {
     ll x, y, vx, vy;
     cin >> x >> y >> vx >> vy;
-    X[i] = {.m = vx, .b = x};
-    Y[i] = {.m = vy, .b = y};
+    X[i] = {.x = 0., .m = vx, .b = x};
+    Y[i] = {.x = 0., .m = vy, .b = y};
   }
 
-  auto min_c = [](const Seg &a, const Seg &b) { return a.m < b.m; };
-  auto max_c = [](const Seg &a, const Seg &b) { return a.m > b.m; };
+  auto ascendente = [](const Seg &a, const Seg &b) { return a.m < b.m; };
+  auto descendente = [](const Seg &a, const Seg &b) { return a.m > b.m; };
 
   MinHull min_x;
   MinHull min_y;
   MaxHull max_x;
   MaxHull max_y;
 
-  sort(X.begin(), X.end(), min_c);
-  sort(X.begin(), X.end(), min_c);
-  for (int i = 0; i < N; ++i) {
+  sort(X.begin(), X.end(), descendente);
+  sort(Y.begin(), Y.end(), descendente);
+  for (size_t i = 0; i < N; ++i) {
     min_x.insert(X[i].m, X[i].b);
     min_y.insert(Y[i].m, Y[i].b);
   }
 
-  sort(X.begin(), X.end(), max_c);
-  sort(X.begin(), X.end(), max_c);
-  for (int i = 0; i < N; ++i) {
+  sort(X.begin(), X.end(), ascendente);
+  sort(Y.begin(), Y.end(), ascendente);
+  for (size_t i = 0; i < N; ++i) {
     max_x.insert(X[i].m, X[i].b);
     max_y.insert(Y[i].m, Y[i].b);
   }
@@ -138,17 +139,17 @@ int main(int argc, char *argv[]) {
   auto ce = min_y.hull.end();
   auto de = max_y.hull.end();
 
-  long double min_area = area(min_x, min_y, max_x, max_y, 0.);
+  ld min_area = area(min_x, min_y, max_x, max_y, 0.);
 
   while (a != ae || b != be || c != ce || d != de) {
     auto minit = min_4_it(&a, &ae, &b, &be, &c, &ce, &d, &de);
-    long double x = (**minit).x;
-    if (x > 0)
+    ld x = (**minit).x;
+    if (x > 0.)
       min_area = min(min_area, area(min_x, min_y, max_x, max_y, x));
     (*minit)++;
   }
 
-  cout << min_area << '\n';
+  cout << fixed << setprecision(15) << min_area << '\n';
 
   return 0;
 }
